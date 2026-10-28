@@ -62,6 +62,8 @@ Nếu đã có `.env`, `db:local` không ghi đè; cấu hình cần dùng host 
 
 Production từ chối đăng nhập khi thiếu Turnstile hoặc `APP_URL`. Vercel cung cấp lớp DDoS nền; cần cấu hình Firewall/WAF phù hợp gói cho endpoint login trước khi vận hành, tránh giới hạn IP quá thấp vì nhiều đơn vị có thể dùng chung NAT. Turnstile và giới hạn ứng dụng không phải cam kết chống mọi DDoS.
 
+Khi dùng Prisma qua Vercel Marketplace, integration có thể đưa URL direct vào `DATABASE_URL`; adapter runtime tự chuyển hostname `db.prisma.io` sang `pooled.db.prisma.io`, giữ nguyên credential/SSL. Prisma CLI vẫn dùng URL direct cho migration. Nếu Vercel đánh dấu URL là Sensitive và không cho kéo về máy, chạy migration và seed trong một deployment khởi tạo có chủ đích trên Vercel; không dùng placeholder do `env pull` tạo ra. Build khởi tạo: `npm run db:generate && npm run db:migrate && npm run db:seed && npm run build`. Sau khi khởi tạo, giữ build mặc định `npm run build` và bỏ `ADMIN_PASSWORD` khỏi cấu hình cloud. Functions được đặt tại Singapore (`sin1`).
+
 Không có thông tin project/credentials cloud được đưa sẵn vào mã nguồn. Chưa cấu hình các biến trên thì chưa phải bản đã triển khai cloud.
 
 ## Nghiệp vụ quan trọng
