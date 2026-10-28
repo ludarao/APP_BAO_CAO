@@ -1,0 +1,147 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Unit {
+  id          String       @id @default(cuid())
+  code        String       @unique
+  name        String
+  group       String       @default("Đơn vị trực thuộc")
+  parentCode  String?
+  scope       String       @default("DIRECT")
+  active      Boolean      @default(true)
+  createdAt   DateTime     @default(now())
+  users       User[]
+  assignments Assignment[]
+  contacts    Contact[]
+}
+
+model User {
+  id                 String    @id @default(cuid())
+  username           String    @unique
+  passwordHash       String
+  role               String    @default("UNIT")
+  mustChangePassword Boolean   @default(true)
+  active             Boolean   @default(true)
+  unitId             String?
+  unit               Unit?     @relation(fields: [unitId], references: [id])
+  sessions           Session[]
+  createdAt          DateTime  @default(now())
+}
+
+model Session {
+  tokenHash String   @id
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model Period {
+  id           String       @id @default(cuid())
+  title        String
+  kind         String
+  startAt      DateTime
+  endAt        DateTime
+  opensAt      DateTime
+  dueAt        DateTime
+  closesAt     DateTime
+  formVersion  Int          @default(1)
+  formSnapshot Json
+  createdAt    DateTime     @default(now())
+  assignments  Assignment[]
+
+  @@index([startAt])
+}
+
+model Assignment {
+  id       String    @id @default(cuid())
+  unitId   String
+  unit     Unit      @relation(fields: [unitId], references: [id])
+  periodId String
+  period   Period    @relation(fields: [periodId], references: [id])
+  dueAt    DateTime?
+  closesAt DateTime?
+  report   Report?
+
+  @@unique([unitId, periodId])
+  @@index([periodId])
+}
+
+model Report {
+  id              String     @id @default(cuid())
+  assignmentId    String     @unique
+  assignment      Assignment @relation(fields: [assignmentId], references: [id])
+  values          Json
+  notes           Json
+  optional        Json
+  status          String
+  completed       Int
+  required        Int
+  version         Int        @default(1)
+  reporterName    String
+  reporterPhone   String
+  firstReceivedAt DateTime   @default(now())
+  firstCompleteAt DateTime?
+  updatedAt       DateTime   @default(now())
+  revisions       Revision[]
+}
+
+model Revision {
+  id             String   @id @default(cuid())
+  reportId       String
+  report         Report   @relation(fields: [reportId], references: [id])
+  unitId         String
+  userId         String
+  idempotencyKey String
+  payloadHash    String
+  version        Int
+  values         Json
+  notes          Json
+  optional       Json
+  status         String
+  reporterName   String
+  reporterPhone  String
+  dueAt          DateTime
+  receivedAt     DateTime @default(now())
+
+  @@unique([unitId, idempotencyKey])
+  @@unique([reportId, version])
+}
+
+model Contact {
+  id        String   @id @default(cuid())
+  unitId    String
+  unit      Unit     @relation(fields: [unitId], references: [id])
+  name      String
+  phone     String
+  updatedAt DateTime @updatedAt
+
+  @@unique([unitId, phone])
+}
+
+model Audit {
+  id        String   @id @default(cuid())
+  actorId   String
+  action    String
+  target    String
+  detail    Json
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}
+
+model RateLimit {
+  key      String   @id
+  count    Int      @default(1)
+  resetsAt DateTime
+
+  @@index([resetsAt])
+}

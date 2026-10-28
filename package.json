@@ -1,0 +1,51 @@
+{
+  "name": "bao-cao-don-vi",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": ">=22.12.0 <25"
+  },
+  "scripts": {
+    "dev": "next dev --hostname 0.0.0.0",
+    "build": "prisma generate && next build",
+    "start": "next start --hostname 0.0.0.0",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate deploy",
+    "db:seed": "tsx scripts/seed.ts",
+    "db:local": "tsx scripts/local-db.ts",
+    "test:integration": "tsx scripts/integration.ts",
+    "test:load": "tsx scripts/load.ts"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "7.10.1",
+    "@prisma/client": "7.10.1",
+    "bcryptjs": "^3.0.2",
+    "dotenv": "^17.2.3",
+    "exceljs": "^4.4.0",
+    "idb": "^8.0.3",
+    "lucide-react": "^0.468.0",
+    "next": "16.4.3",
+    "pg": "^8.16.3",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.0",
+    "@types/pg": "^8.15.6",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "embedded-postgres": "^17.6.0-beta.15",
+    "prisma": "7.10.1",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.12"
+  },
+  "overrides": {
+    "exceljs": {
+      "uuid": "^11.1.1"
+    }
+  }
+}

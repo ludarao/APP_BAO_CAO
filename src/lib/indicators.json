@@ -1,0 +1,472 @@
+[
+  {
+    "key": "01",
+    "code": "01",
+    "label": "Số văn bản chỉ đạo, triển khai thực hiện Chương trình hành động",
+    "unit": "Văn bản",
+    "group": 1,
+    "weekly": false,
+    "monthly": true,
+    "aggregation": "sum"
+  },
+  {
+    "key": "02",
+    "code": "02",
+    "label": "Số hội nghị quán triệt, phổ biến các quy định về Điều lệnh CAND",
+    "unit": "Hội nghị",
+    "group": 1,
+    "weekly": false,
+    "monthly": true,
+    "aggregation": "sum"
+  },
+  {
+    "key": "03",
+    "code": "03",
+    "label": "Tổng số CBCS thuộc diện quán triệt",
+    "unit": "Người",
+    "group": 1,
+    "weekly": false,
+    "monthly": true,
+    "aggregation": "snapshot"
+  },
+  {
+    "key": "04",
+    "code": "04",
+    "label": "Số CBCS đã được quán triệt",
+    "unit": "Người",
+    "group": 1,
+    "weekly": false,
+    "monthly": true,
+    "aggregation": "confirm"
+  },
+  {
+    "key": "05",
+    "code": "05",
+    "label": "Số buổi giao ban đã tổ chức trong kỳ",
+    "unit": "Buổi",
+    "group": 1,
+    "weekly": false,
+    "monthly": true,
+    "aggregation": "sum"
+  },
+  {
+    "key": "06",
+    "code": "06",
+    "label": "Số buổi giao ban có nội dung nghiên cứu, học tập Điều lệnh CAND",
+    "unit": "Buổi",
+    "group": 1,
+    "weekly": false,
+    "monthly": true,
+    "aggregation": "sum"
+  },
+  {
+    "key": "07",
+    "code": "07",
+    "label": "Số hội thảo, tọa đàm về nâng cao ý thức chấp hành điều lệnh",
+    "unit": "Cuộc",
+    "group": 1,
+    "weekly": false,
+    "monthly": true,
+    "aggregation": "sum"
+  },
+  {
+    "key": "08",
+    "code": "08",
+    "label": "Số cuộc thi tìm hiểu Điều lệnh CAND đã tổ chức",
+    "unit": "Cuộc",
+    "group": 1,
+    "weekly": false,
+    "monthly": true,
+    "aggregation": "sum"
+  },
+  {
+    "key": "09",
+    "code": "09",
+    "label": "Tổng quân số thuộc diện phải tập huấn",
+    "unit": "Người",
+    "group": 2,
+    "weekly": false,
+    "monthly": false,
+    "aggregation": "snapshot"
+  },
+  {
+    "key": "10",
+    "code": "10",
+    "label": "Số người thực tế tham gia tập huấn",
+    "unit": "Người",
+    "group": 2,
+    "weekly": false,
+    "monthly": false,
+    "aggregation": "confirm"
+  },
+  {
+    "key": "11",
+    "code": "11",
+    "label": "Số người chưa tham gia tập huấn",
+    "unit": "Người",
+    "group": 2,
+    "weekly": false,
+    "monthly": false,
+    "aggregation": "confirm"
+  },
+  {
+    "key": "12",
+    "code": "12",
+    "label": "Số người đạt loại Giỏi",
+    "unit": "Người",
+    "group": 2,
+    "weekly": false,
+    "monthly": false,
+    "aggregation": "confirm"
+  },
+  {
+    "key": "13",
+    "code": "13",
+    "label": "Số người đạt loại Khá",
+    "unit": "Người",
+    "group": 2,
+    "weekly": false,
+    "monthly": false,
+    "aggregation": "confirm"
+  },
+  {
+    "key": "14",
+    "code": "14",
+    "label": "Số người đạt yêu cầu (mức Đạt)",
+    "unit": "Người",
+    "group": 2,
+    "weekly": false,
+    "monthly": false,
+    "aggregation": "confirm"
+  },
+  {
+    "key": "15",
+    "code": "15",
+    "label": "Số người không đạt yêu cầu",
+    "unit": "Người",
+    "group": 2,
+    "weekly": false,
+    "monthly": false,
+    "aggregation": "confirm"
+  },
+  {
+    "key": "16",
+    "code": "16",
+    "label": "Số hội thi, hội thao điều lệnh, quân sự, võ thuật tổ chức",
+    "unit": "Cuộc",
+    "group": 2,
+    "weekly": false,
+    "monthly": false,
+    "aggregation": "sum"
+  },
+  {
+    "key": "17",
+    "code": "17",
+    "label": "Số câu lạc bộ bắn súng, võ thuật, TDTT đang hoạt động",
+    "unit": "Câu lạc bộ",
+    "group": 2,
+    "weekly": false,
+    "monthly": false,
+    "aggregation": "snapshot"
+  },
+  {
+    "key": "18",
+    "code": "18",
+    "label": "Số hoạt động giao lưu, thi đấu đã tổ chức",
+    "unit": "Hoạt động",
+    "group": 2,
+    "weekly": false,
+    "monthly": false,
+    "aggregation": "sum"
+  },
+  {
+    "key": "19",
+    "code": "19",
+    "label": "Số buổi đối thoại của lãnh đạo, chỉ huy với CBCS",
+    "unit": "Buổi",
+    "group": 3,
+    "weekly": false,
+    "monthly": true,
+    "aggregation": "sum"
+  },
+  {
+    "key": "20",
+    "code": "20",
+    "label": "Số lượt CBCS tham gia đối thoại",
+    "unit": "Lượt người",
+    "group": 3,
+    "weekly": false,
+    "monthly": true,
+    "aggregation": "sum"
+  },
+  {
+    "key": "21",
+    "code": "21",
+    "label": "Số kiến nghị, vướng mắc được tiếp nhận qua đối thoại",
+    "unit": "Nội dung",
+    "group": 3,
+    "weekly": false,
+    "monthly": true,
+    "aggregation": "sum"
+  },
+  {
+    "key": "22",
+    "code": "22",
+    "label": "Số kiến nghị, vướng mắc đã được giải quyết",
+    "unit": "Nội dung",
+    "group": 3,
+    "weekly": false,
+    "monthly": true,
+    "aggregation": "sum"
+  },
+  {
+    "key": "23",
+    "code": "23",
+    "label": "Số lượt lãnh đạo, chỉ huy trực tiếp kiểm tra chấp hành điều lệnh",
+    "unit": "Lượt",
+    "group": 3,
+    "weekly": true,
+    "monthly": true,
+    "aggregation": "sum"
+  },
+  {
+    "key": "24",
+    "code": "24",
+    "label": "Số lãnh đạo, chỉ huy vi phạm điều lệnh",
+    "unit": "Người",
+    "group": 3,
+    "weekly": true,
+    "monthly": true,
+    "aggregation": "confirm"
+  },
+  {
+    "key": "25_1",
+    "code": "25",
+    "label": "Lãnh đạo, chỉ huy vi phạm bỏ trực",
+    "unit": "Người",
+    "group": 3,
+    "weekly": true,
+    "monthly": true,
+    "aggregation": "confirm"
+  },
+  {
+    "key": "25_2",
+    "code": "25",
+    "label": "Lãnh đạo, chỉ huy vi phạm quy định nồng độ cồn",
+    "unit": "Người",
+    "group": 3,
+    "weekly": true,
+    "monthly": true,
+    "aggregation": "confirm"
+  },
+  {
+    "key": "25_3",
+    "code": "25",
+    "label": "Tổng số người vi phạm thuộc hai loại trên (không cộng trùng)",
+    "unit": "Người",
+    "group": 3,
+    "weekly": true,
+    "monthly": true,
+    "aggregation": "confirm"
+  },
+  {
+    "key": "26",
+    "code": "26",
+    "label": "Số lượt kiểm tra của lực lượng bán chuyên trách",
+    "unit": "Lượt",
+    "group": 4,
+    "weekly": true,
+    "monthly": true,
+    "aggregation": "sum"
+  },
+  {
+    "key": "28",
+    "code": "28",
+    "label": "Số tập thể được kiểm tra",
+    "unit": "Tập thể",
+    "group": 4,
+    "weekly": true,
+    "monthly": true,
+    "aggregation": "sum"
+  },
+  {
+    "key": "29",
+    "code": "29",
+    "label": "Số cá nhân được kiểm tra",
+    "unit": "Cá nhân",
+    "group": 4,
+    "weekly": true,
+    "monthly": true,
+    "aggregation": "confirm"
+  },
+  {
+    "key": "30",
+    "code": "30",
+    "label": "Số tập thể bị phát hiện vi phạm",
+    "unit": "Tập thể",
+    "group": 4,
+    "weekly": true,
+    "monthly": true,
+    "aggregation": "sum"
+  },
+  {
+    "key": "31",
+    "code": "31",
+    "label": "Số cá nhân bị phát hiện vi phạm",
+    "unit": "Cá nhân",
+    "group": 4,
+    "weekly": true,
+    "monthly": true,
+    "aggregation": "confirm"
+  },
+  {
+    "key": "32",
+    "code": "32",
+    "label": "Số trường hợp vi phạm chế độ trực",
+    "unit": "Trường hợp",
+    "group": 4,
+    "weekly": true,
+    "monthly": true,
+    "aggregation": "sum"
+  },
+  {
+    "key": "33",
+    "code": "33",
+    "label": "Số trường hợp vi phạm quy định về rượu, bia, nồng độ cồn",
+    "unit": "Trường hợp",
+    "group": 4,
+    "weekly": true,
+    "monthly": true,
+    "aggregation": "sum"
+  },
+  {
+    "key": "34",
+    "code": "34",
+    "label": "Số trường hợp vi phạm trang phục, tư thế, lễ tiết, tác phong",
+    "unit": "Trường hợp",
+    "group": 4,
+    "weekly": true,
+    "monthly": true,
+    "aggregation": "sum"
+  },
+  {
+    "key": "35",
+    "code": "35",
+    "label": "Số trường hợp vi phạm nội vụ, vệ sinh trụ sở",
+    "unit": "Trường hợp",
+    "group": 4,
+    "weekly": true,
+    "monthly": true,
+    "aggregation": "sum"
+  },
+  {
+    "key": "36",
+    "code": "36",
+    "label": "Số trường hợp vi phạm kỷ luật, quy trình công tác",
+    "unit": "Trường hợp",
+    "group": 4,
+    "weekly": true,
+    "monthly": true,
+    "aggregation": "sum"
+  },
+  {
+    "key": "37_1",
+    "code": "37",
+    "label": "Bị phê bình – tập thể",
+    "unit": "Tập thể",
+    "group": 4,
+    "weekly": true,
+    "monthly": true,
+    "aggregation": "sum"
+  },
+  {
+    "key": "37_2",
+    "code": "37",
+    "label": "Bị phê bình – cá nhân",
+    "unit": "Cá nhân",
+    "group": 4,
+    "weekly": true,
+    "monthly": true,
+    "aggregation": "sum"
+  },
+  {
+    "key": "38_1",
+    "code": "38",
+    "label": "Bị hạ bậc danh hiệu thi đua hoặc mức xếp loại – tập thể",
+    "unit": "Tập thể",
+    "group": 4,
+    "weekly": true,
+    "monthly": true,
+    "aggregation": "sum"
+  },
+  {
+    "key": "38_2",
+    "code": "38",
+    "label": "Bị hạ bậc danh hiệu thi đua hoặc mức xếp loại – cá nhân",
+    "unit": "Cá nhân",
+    "group": 4,
+    "weekly": true,
+    "monthly": true,
+    "aggregation": "sum"
+  },
+  {
+    "key": "39",
+    "code": "39",
+    "label": "Số cá nhân bị áp dụng hình thức kỷ luật",
+    "unit": "Người",
+    "group": 4,
+    "weekly": true,
+    "monthly": true,
+    "aggregation": "confirm"
+  },
+  {
+    "key": "42",
+    "code": "42",
+    "label": "Tổng số cán bộ bán chuyên trách làm công tác kiểm tra điều lệnh",
+    "unit": "Người",
+    "group": 5,
+    "weekly": false,
+    "monthly": false,
+    "aggregation": "snapshot"
+  },
+  {
+    "key": "45",
+    "code": "45",
+    "label": "Số tin, bài, phóng sự tuyên truyền trực tiếp về việc thực hiện Chương trình hành động",
+    "unit": "Tin, bài",
+    "group": 6,
+    "weekly": false,
+    "monthly": true,
+    "aggregation": "sum"
+  },
+  {
+    "key": "46",
+    "code": "46",
+    "label": "Số mô hình, sáng kiến, cách làm hiệu quả được triển khai",
+    "unit": "Mô hình",
+    "group": 6,
+    "weekly": false,
+    "monthly": true,
+    "aggregation": "sum"
+  },
+  {
+    "key": "47",
+    "code": "47",
+    "label": "Số tập thể tiêu biểu được đề xuất biểu dương, khen thưởng",
+    "unit": "Tập thể",
+    "group": 6,
+    "weekly": false,
+    "monthly": true,
+    "aggregation": "sum"
+  },
+  {
+    "key": "48",
+    "code": "48",
+    "label": "Số cá nhân tiêu biểu được đề xuất biểu dương, khen thưởng",
+    "unit": "Cá nhân",
+    "group": 6,
+    "weekly": false,
+    "monthly": true,
+    "aggregation": "confirm"
+  }
+]

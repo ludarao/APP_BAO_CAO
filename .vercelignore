@@ -1,0 +1,14 @@
+.env*
+!.env.example
+.local/
+.git/
+.next/
+node_modules/
+*.docx
+docs/
+tests/
+scripts/integration.ts
+scripts/load.ts
+scripts/local-db.ts
+*.log
+*.tsbuildinfo

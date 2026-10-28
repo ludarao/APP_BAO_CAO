@@ -1,0 +1,11 @@
+node_modules/
+.next/
+.env*
+!.env.example
+.local/
+src/generated/
+*.tsbuildinfo
+coverage/
+.vercel/
+*.log
+credentials-*.xlsx
