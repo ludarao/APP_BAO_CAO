@@ -32,13 +32,15 @@ Vercel có thể không cho kéo giá trị Sensitive về local; `vercel env pu
 
 Hai khóa đã được cấu hình cho Production trong lần thiết lập này; secret được lưu dưới dạng Sensitive.
 
-Chưa coi là kiểm thử đăng nhập hoàn chỉnh cho đến khi widget thực tế đã cấu hình và người quản trị đăng nhập, đổi mật khẩu lần đầu. Các domain alias khác không tự được cấp quyền đăng nhập vì `APP_URL` và hostname Turnstile được kiểm tra chính xác.
+Đã kiểm tra đăng nhập admin thành công với widget Turnstile thật trên production và đến màn hình đổi mật khẩu lần đầu. Người quản trị tự chọn, nhập và xác nhận mật khẩu mới. Các domain alias khác không tự được cấp quyền đăng nhập vì `APP_URL` và hostname Turnstile được kiểm tra chính xác.
 
 ## Kiểm tra cloud đã thực hiện
 
 - Trang chủ production: HTTP 200.
 - `/api/bootstrap` không có phiên: HTTP 401.
 - `/api/maintenance` với Bearer secret: HTTP 200, thực thi truy vấn trên database production thành công.
+- Token Turnstile không hợp lệ bị từ chối bằng HTTP 400. Widget thật báo thành công và đăng nhập admin hợp lệ đã qua.
+- Deployment chạy build thường `npm run build`; biến `ADMIN_PASSWORD` đã được xóa trước deployment này. Mật khẩu tài khoản được lưu dưới dạng hash trong database.
 - Mật khẩu, URL database và secret không được ghi vào tài liệu này.
 
 Kiểm thử 500 lượt gửi đồng thời trước đây là trên local, không phải benchmark của cloud. Cần kiểm thử tải và cấu hình sao lưu riêng trước khi sử dụng diện rộng. Preview hiện kết nối cùng database với Production; không dùng Preview để ghi số liệu thử vào database thật.
