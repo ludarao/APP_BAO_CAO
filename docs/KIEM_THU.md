@@ -1,5 +1,7 @@
 # Kết quả kiểm tra bản đầu
 
+Cập nhật triển khai cloud sau bản kiểm tra local này: xem [VERCEL.md](VERCEL.md).
+
 Ngày kiểm tra: 28/10/2026, giờ Việt Nam. Môi trường: Next.js 16.4.3, Prisma ORM 7.10.1, Node.js 24, PostgreSQL chạy trên máy local. Không dùng dữ liệu báo cáo thực.
 
 ## Kiểm tra đã qua

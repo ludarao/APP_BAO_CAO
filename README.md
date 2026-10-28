@@ -2,6 +2,8 @@
 
 Ứng dụng Next.js + Prisma Postgres cho nhập số liệu tuần, tháng, quý, 6 tháng và năm. Danh mục 47 ô được lấy từ DOCX trong thư mục gốc; không tự thêm 5 mã chưa có nội dung.
 
+Production: https://app-bao-cao-ten.vercel.app. Cấu hình hạ tầng và quy trình vận hành được ghi tại [docs/VERCEL.md](docs/VERCEL.md).
+
 ## Đã triển khai
 
 - Đăng nhập bằng tài khoản đơn vị, cookie phiên HttpOnly, đổi mật khẩu bắt buộc lần đầu, thu hồi phiên khi đổi/đặt lại mật khẩu hoặc khóa đơn vị.
