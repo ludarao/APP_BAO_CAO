@@ -45,18 +45,20 @@ model Session {
 }
 
 model Period {
-  id           String       @id @default(cuid())
-  title        String
-  kind         String
-  startAt      DateTime
-  endAt        DateTime
-  opensAt      DateTime
-  dueAt        DateTime
-  closesAt     DateTime
-  formVersion  Int          @default(1)
-  formSnapshot Json
-  createdAt    DateTime     @default(now())
-  assignments  Assignment[]
+  id               String       @id @default(cuid())
+  title            String
+  kind             String
+  startAt          DateTime
+  endAt            DateTime
+  opensAt          DateTime
+  dueAt            DateTime
+  closesAt         DateTime
+  formVersion      Int          @default(1)
+  formSnapshot     Json
+  autoKey          String?      @unique
+  scheduleOverride Boolean      @default(false)
+  createdAt        DateTime     @default(now())
+  assignments      Assignment[]
 
   @@index([startAt])
 }
@@ -144,4 +146,17 @@ model RateLimit {
   resetsAt DateTime
 
   @@index([resetsAt])
+}
+
+model ReportingSchedule {
+  kind           String   @id
+  enabled        Boolean  @default(true)
+  openingDay     Int      @default(1)
+  opensTime      String   @default("08:00")
+  dueTime        String   @default("16:00")
+  closesTime     String   @default("17:00")
+  dueAfterDays   Int      @default(0)
+  closeAfterDays Int      @default(0)
+  effectiveFrom  DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }

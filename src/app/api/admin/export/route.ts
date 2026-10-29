@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { requireUser, rateLimit } from "@/lib/auth";
 import { endpoint, ApiError } from "@/lib/http";
 import { fields, timing, formatDate } from "@/lib/forms";
+import { aggregateScope, metricSummary } from "@/lib/aggregation";
 export const maxDuration = 60;
 export const GET = endpoint(async (req) => {
   const user = await requireUser(true);
@@ -24,6 +25,12 @@ export const GET = endpoint(async (req) => {
     { isolationLevel: "RepeatableRead" },
   );
   if (!period) throw new ApiError(404, "Không tìm thấy kỳ.");
+  const unitId = url.searchParams.get("unitId");
+  if (unitId) {
+    period.assignments = period.assignments.filter((a) => a.unitId === unitId);
+    if (!period.assignments.length)
+      throw new ApiError(404, "Đơn vị không thuộc kỳ này.");
+  }
   const wb = new ExcelJS.Workbook();
   wb.creator = "Cổng báo cáo đơn vị";
   wb.created = new Date();
@@ -78,27 +85,18 @@ export const GET = endpoint(async (req) => {
     "Khó khăn kiến nghị",
     "Tiến độ nhiệm vụ",
   ]);
+  const { selected, excluded } = aggregateScope(
+    period.assignments,
+    unitGraph,
+    includeDrafts,
+  );
   const eligible = period.assignments.filter(
     (a) => a.report && (includeDrafts || a.report.status === "COMPLETE"),
   );
-  const byCode = new Map(unitGraph.map((u) => [u.code, u]));
-  const eligibleCodes = new Set(eligible.map((a) => a.unit.code));
-  const selected = eligible.filter((a) => {
-    let parent = a.unit.parentCode;
-    const visited = new Set<string>();
-    while (parent && !visited.has(parent)) {
-      visited.add(parent);
-      const ancestor = byCode.get(parent);
-      if (!ancestor) break;
-      if (
-        ancestor.scope === "INCLUDES_CHILDREN" &&
-        eligibleCodes.has(ancestor.code)
-      )
-        return false;
-      parent = ancestor.parentCode;
-    }
-    return true;
-  });
+  meta.addRow([
+    "Đơn vị được chọn",
+    unitId ? period.assignments[0].unit.name : "Tất cả đơn vị được giao",
+  ]);
   meta.addRow([
     "Đơn vị tính vào tổng",
     selected.map((a) => a.unit.code).join(", "),
@@ -170,24 +168,22 @@ export const GET = endpoint(async (req) => {
     "Nguồn chọn thiếu ô",
     "Ghi chú",
   ]);
-  for (const f of fields.filter((f) =>
-    period.kind === "WEEK" ? f.weekly : true,
-  )) {
-    const values = selected.map(
-      (a) => (a.report!.values as Record<string, number | null>)[f.key],
-    );
-    const present = values.filter((v): v is number => typeof v === "number");
-    const optional = period.kind === "MONTH" && !f.monthly;
+  for (const f of metricSummary(
+    period.kind,
+    period.assignments,
+    unitGraph,
+    includeDrafts,
+  ).metrics) {
     summary.addRow([
       f.key,
       f.label,
       f.unit,
-      present.length ? present.reduce((a, b) => a + b, 0) : null,
-      present.length,
-      optional ? null : values.length - present.length,
-      optional
-        ? "Chỉ bổ sung khi phát sinh/thay đổi; không suy ra quân số hiện tại từ ô trống."
-        : "Tổng nguồn đã chọn; không mặc định là tổng toàn bộ đơn vị phải nộp. Xem đơn vị còn thiếu tại sheet Tiến độ.",
+      f.value,
+      f.contributors,
+      f.missing,
+      f.conditional
+        ? "Chỉ tính đơn vị xác nhận có phát sinh/thay đổi."
+        : "Tổng nguồn đã chọn trong cùng kỳ; không mặc định là tổng toàn bộ đơn vị phải nộp. Xem sheet Tiến độ.",
     ]);
   }
   for (const sheet of wb.worksheets) {

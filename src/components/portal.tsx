@@ -23,6 +23,7 @@ import { api, loadBootstrap, saveBootstrap, clearOffline } from "@/lib/client";
 import type { Bootstrap } from "@/lib/types";
 import Admin from "./admin";
 import Reporter from "./reporter";
+import Analytics from "./analytics";
 
 declare global {
   interface Window {
@@ -48,6 +49,11 @@ export default function Portal() {
     [expired, setExpired] = useState(false);
   const notify = useCallback((message: string) => {
     setNotice(message);
+  }, []);
+  const [, tickClock] = useState(0);
+  useEffect(() => {
+    const timer = setInterval(() => tickClock((v) => v + 1), 30000);
+    return () => clearInterval(timer);
   }, []);
   const refresh = useCallback(
     async (periodId?: string) => {
@@ -157,6 +163,7 @@ export default function Portal() {
   const items = admin
     ? ([
         ["dashboard", "Tổng quan", LayoutDashboard],
+        ["analytics", "Số liệu tổng hợp", BarChart3],
         ["reports", "Theo dõi báo cáo", ClipboardList],
         ["units", "Đơn vị & tài khoản", Building2],
         ["periods", "Kỳ báo cáo", CalendarDays],
@@ -168,6 +175,7 @@ export default function Portal() {
       ] as const);
   const titles: Record<string, string> = {
     dashboard: "Tổng quan",
+    analytics: "Số liệu tổng hợp",
     reports: admin ? "Theo dõi báo cáo" : "Nhập báo cáo",
     units: "Đơn vị & tài khoản",
     periods: "Quản lý kỳ báo cáo",
@@ -290,7 +298,11 @@ export default function Portal() {
               />
             </>
           ) : admin ? (
-            <Admin data={data} tab={tab} refresh={refresh} notify={notify} />
+            tab === "analytics" ? (
+              <Analytics data={data} notify={notify} />
+            ) : (
+              <Admin data={data} tab={tab} refresh={refresh} notify={notify} />
+            )
           ) : (
             <Reporter
               data={data}
@@ -370,6 +382,7 @@ function Login({
       sitekey: siteKey,
       action: "login",
       language: "vi",
+      size: window.innerWidth < 360 ? "compact" : "normal",
       callback: (t: string) => setToken(t),
       "expired-callback": () => setToken(""),
       "error-callback": () => setToken(""),

@@ -34,3 +34,9 @@ Trước đó, dev server có một số kết nối TCP bị từ chối/ngắt
 - Turnstile production đã có kiểm tra secret/hostname/action tại server nhưng chưa kiểm tra end-to-end với widget thật của project.
 - Chưa kiểm tra khôi phục từ bản backup cloud; cần thiết lập trước vận hành chính thức.
 - Kết quả local không phải cam kết tốc độ hay khả năng chịu tải của gói Vercel/Prisma miễn phí.
+
+## Bổ sung ngày 29/10/2026
+
+- 27 unit tests: lịch theo giờ Việt Nam, chuyển năm/năm nhuận, hạn qua ngày, chống tạo hồi tố; tổng hợp theo cây đơn vị, thiếu số liệu so với số 0, trường tháng tùy chọn, mặc định số 0 giữ dữ liệu cũ.
+- 52 integration assertions trên PostgreSQL local và HTTP API: phân quyền analytics/schedules, số tổng không cộng trùng cấp con, lọc một đơn vị và Excel tương ứng, xác thực thời gian, tạo lịch không trùng, giữ kỳ đã chỉnh riêng, hai lần sync đồng thời tự bổ sung assignment duy nhất.
+- Kiểm tra giao diện ở viewport 390×844: độ phóng đại sau reload = 1, nội dung không tràn ngang, input/select 16px; chưa kiểm tra trên iPhone thật.

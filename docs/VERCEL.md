@@ -44,3 +44,16 @@ Hai khóa đã được cấu hình cho Production trong lần thiết lập nà
 - Mật khẩu, URL database và secret không được ghi vào tài liệu này.
 
 Kiểm thử 500 lượt gửi đồng thời trước đây là trên local, không phải benchmark của cloud. Cần kiểm thử tải và cấu hình sao lưu riêng trước khi sử dụng diện rộng. Preview hiện kết nối cùng database với Production; không dùng Preview để ghi số liệu thử vào database thật.
+
+## Cập nhật dashboard và lịch tự động (29/10/2026)
+
+Chạy migration mới và tạo trước lịch bằng môi trường production trước khi đưa mã mới vào phục vụ:
+
+```sh
+npm run db:generate
+npm run db:migrate
+npm run db:schedules
+npm run build
+```
+
+Không chạy lại seed tài khoản admin. Migration bổ sung bảng ReportingSchedule và metadata của Period, không thay đổi báo cáo đã nộp. Maintenance cron sẵn có chạy hằng ngày lúc 03:00 giờ Việt Nam, bổ sung lịch trước 12 tháng và giao kỳ cho đơn vị mới; một lần chạy lặp không tạo trùng. Cổng mở/khóa tại timestamp cấu hình, không cần cron chạy đúng phút. Sửa lịch trong giao diện admin có hiệu lực ngay cho các kỳ được phép cập nhật.

@@ -5,6 +5,7 @@ import { hash } from "bcryptjs";
 import ExcelJS from "exceljs";
 import { db } from "../src/lib/db";
 import { applicableFields, timing } from "../src/lib/forms";
+import { syncSchedules } from "../src/lib/schedules";
 
 const base = process.env.TEST_APP_URL || "http://localhost:3000";
 const tag = `TEST_${Date.now()}`;
@@ -13,6 +14,13 @@ const unitIds: string[] = [],
   userIds: string[] = [];
 let actorId = "",
   assertions = 0;
+let schedulePeriodBackup: {
+  id: string;
+  opensAt: Date;
+  dueAt: Date;
+  closesAt: Date;
+  scheduleOverride: boolean;
+} | null = null;
 function check(value: unknown, message: string) {
   assert.ok(value, message);
   assertions++;
@@ -174,9 +182,103 @@ async function main() {
   const bootstrap = await request("/api/bootstrap", unitCookie);
   check(
     bootstrap.status === 200 &&
-      bootstrap.body.assignments.length === 1 &&
-      bootstrap.body.assignments[0].unitId === unitIds[0],
+      bootstrap.body.assignments.some(
+        (a: { periodId: string }) => a.periodId === period.id,
+      ) &&
+      bootstrap.body.assignments.every(
+        (a: { unitId: string }) => a.unitId === unitIds[0],
+      ),
     "Unit sees own assignment only",
+  );
+  check(
+    (await request("/api/admin/schedules", unitCookie)).status === 403,
+    "Unit cannot change schedules",
+  );
+  const scheduleList = await request("/api/admin/schedules", adminCookie);
+  check(
+    scheduleList.status === 200 && scheduleList.body.schedules.length === 5,
+    "All five default schedules exist",
+  );
+  check(
+    (await db().assignment.count({
+      where: { unitId: unitIds[0], period: { autoKey: { not: null } } },
+    })) > 0,
+    "New units join future automatic periods",
+  );
+  const schedule = scheduleList.body.schedules.find(
+    (r: { kind: string }) => r.kind === "YEAR",
+  );
+  check(
+    (
+      await request("/api/admin/schedules", adminCookie, {
+        schedule: { ...schedule, dueTime: "01:00" },
+        applyToOpen: false,
+      })
+    ).status === 400,
+    "Reject invalid default window",
+  );
+  const beforeSchedules = await db().period.count({
+    where: { autoKey: { not: null } },
+  });
+  check(
+    (
+      await request("/api/admin/schedules", adminCookie, {
+        schedule,
+        applyToOpen: false,
+      })
+    ).status === 200,
+    "Save default schedule",
+  );
+  check(
+    (await db().period.count({ where: { autoKey: { not: null } } })) ===
+      beforeSchedules,
+    "Repeated schedule sync does not duplicate periods",
+  );
+  const automatic = await db().period.findFirstOrThrow({
+    where: { autoKey: { not: null }, opensAt: { gt: new Date() } },
+    orderBy: { opensAt: "asc" },
+  });
+  schedulePeriodBackup = {
+    id: automatic.id,
+    opensAt: automatic.opensAt,
+    dueAt: automatic.dueAt,
+    closesAt: automatic.closesAt,
+    scheduleOverride: automatic.scheduleOverride,
+  };
+  const shiftTime = (value: Date) =>
+    new Date(value.getTime() + 3600000).toISOString();
+  check(
+    (
+      await request("/api/admin/deadlines", adminCookie, {
+        periodId: automatic.id,
+        opensAt: shiftTime(automatic.opensAt),
+        dueAt: shiftTime(automatic.dueAt),
+        closesAt: shiftTime(automatic.closesAt),
+        reason: "Kiểm thử giữ lịch chỉnh riêng",
+      })
+    ).status === 200,
+    "Manually adjust an automatic period",
+  );
+  await db().assignment.deleteMany({
+    where: { periodId: automatic.id, unitId: unitIds[0] },
+  });
+  await Promise.all([
+    syncSchedules(new Date(), false, actor.id),
+    syncSchedules(new Date(), false, actor.id),
+  ]);
+  const preserved = await db().period.findUniqueOrThrow({
+    where: { id: automatic.id },
+  });
+  check(
+    preserved.scheduleOverride &&
+      preserved.opensAt.toISOString() === shiftTime(automatic.opensAt),
+    "Daily generation preserves manually overridden period",
+  );
+  check(
+    (await db().assignment.count({
+      where: { periodId: automatic.id, unitId: unitIds[0] },
+    })) === 1,
+    "Concurrent sync heals missing enrollment without duplicates",
   );
   const values = Object.fromEntries(
     applicableFields("WEEK", { training: false, staffing: false }).map((f) => [
@@ -353,6 +455,47 @@ async function main() {
     workbook.getWorksheet("Tổng hợp")!.getRow(2).getCell(4).value === 10,
     "Exclude covered child even when intermediary is not assigned to period",
   );
+  check(
+    (await request(`/api/admin/analytics?periodId=${period.id}`, unitCookie))
+      .status === 403,
+    "Protect analytics from unit accounts",
+  );
+  const allData = await request(
+    `/api/admin/analytics?periodId=${period.id}`,
+    adminCookie,
+  );
+  check(
+    allData.status === 200 && allData.body.metrics.length === 20,
+    "Analytics contains all weekly indicators",
+  );
+  check(
+    allData.body.metrics.find((m: { key: string }) => m.key === "23").value ===
+      10,
+    "Analytics avoids parent-child double counting",
+  );
+  const childData = await request(
+    `/api/admin/analytics?periodId=${period.id}&unitId=${unitIds[1]}`,
+    adminCookie,
+  );
+  check(
+    childData.body.metrics.find((m: { key: string }) => m.key === "23")
+      .value === 3,
+    "Unit filter shows exact unit values",
+  );
+  check(
+    childData.body.detail.report.reporterName === finalPayload.reporterName,
+    "Unit detail includes reporter metadata",
+  );
+  const exportChild = await fetch(
+    `${base}/api/admin/export?periodId=${period.id}&unitId=${unitIds[1]}`,
+    { headers: { Cookie: adminCookie } },
+  );
+  const childWorkbook = new ExcelJS.Workbook();
+  await childWorkbook.xlsx.load(await exportChild.arrayBuffer());
+  check(
+    childWorkbook.getWorksheet("Tổng hợp")!.getRow(2).getCell(4).value === 3,
+    "Excel follows selected unit",
+  );
   const overridden = await request("/api/admin/deadlines", adminCookie, {
     periodId: period.id,
     unitIds: [unitIds[0]],
@@ -415,6 +558,11 @@ async function main() {
   );
 }
 async function cleanup() {
+  if (schedulePeriodBackup) {
+    const { id, ...data } = schedulePeriodBackup;
+    await db().period.update({ where: { id }, data });
+  }
+
   if (unitIds.length) {
     await db().revision.deleteMany({ where: { unitId: { in: unitIds } } });
     await db().report.deleteMany({

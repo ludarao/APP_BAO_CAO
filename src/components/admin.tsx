@@ -27,6 +27,7 @@ import { fields, formatDate, kinds, slug, timing } from "@/lib/forms";
 import { unitRowSchema } from "@/lib/admin";
 import type { Assignment, Bootstrap, Period, Unit } from "@/lib/types";
 import { Modal } from "./portal";
+import ScheduleSettings from "./schedule-settings";
 
 type Props = {
   data: Bootstrap;
@@ -769,6 +770,12 @@ export default function Admin({ data, tab, refresh, notify }: Props) {
         </section>
       )}
       {tab === "periods" && (
+        <ScheduleSettings
+          notify={notify}
+          done={() => refresh(data.selectedId)}
+        />
+      )}
+      {tab === "periods" && (
         <div className="period-grid">
           {periods.map((p) => (
             <article className="card period-card" key={p.id}>
@@ -779,7 +786,14 @@ export default function Admin({ data, tab, refresh, notify }: Props) {
                 <CalendarDays size={20} />
               </div>
               <h3>{p.title}</h3>
-              <p>{p._count?.assignments || 0} đơn vị được giao</p>
+              <p>
+                {p._count?.assignments || 0} đơn vị được giao ·{" "}
+                {p.autoKey
+                  ? p.scheduleOverride
+                    ? "Tự động · đã chỉnh riêng"
+                    : "Theo lịch tự động"
+                  : "Tạo thủ công"}
+              </p>
               <dl>
                 <div>
                   <dt>Khoảng số liệu</dt>

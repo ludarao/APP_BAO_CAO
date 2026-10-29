@@ -21,11 +21,9 @@ export async function api(path: string, data?: unknown, method = "POST") {
       { status: 0 },
     );
   }
-  const result = await res
-    .json()
-    .catch(() => ({
-      error: "Máy chủ chưa phản hồi dữ liệu hợp lệ. Hãy thử lại.",
-    }));
+  const result = await res.json().catch(() => ({
+    error: "Máy chủ chưa phản hồi dữ liệu hợp lệ. Hãy thử lại.",
+  }));
   if (!res.ok) {
     if (res.status === 401 && !path.includes("/auth/login"))
       window.dispatchEvent(new Event("auth-expired"));

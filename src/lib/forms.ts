@@ -150,6 +150,15 @@ export function canonicalValues(
     applicableFields(kind, optional).map((f) => [f.key, values[f.key] ?? null]),
   );
 }
+export function initialValues(
+  kind: string,
+  optional: Optional,
+  stored: Values = {},
+): Values {
+  return Object.fromEntries(
+    applicableFields(kind, optional).map((f) => [f.key, stored[f.key] ?? 0]),
+  );
+}
 export function slug(value: string) {
   return value
     .normalize("NFD")

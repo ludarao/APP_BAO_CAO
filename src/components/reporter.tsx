@@ -26,6 +26,7 @@ import {
   formatDay,
   groups,
   inspectValues,
+  initialValues,
   kinds,
   reportSchema,
   type Optional,
@@ -243,7 +244,11 @@ function Entry({
   const key = `${data.me.id}:${a.unitId}:${p.id}:v${FORM_VERSION}`;
   function initial(): Draft {
     return {
-      values: a.report?.values || {},
+      values: initialValues(
+        p.kind,
+        a.report?.optional || { training: null, staffing: null },
+        a.report?.values || {},
+      ),
       optional: a.report?.optional || { training: null, staffing: null },
       notes: a.report?.notes || {
         highlights: "",
@@ -286,7 +291,10 @@ function Entry({
           saved.unitId === a.unitId &&
           saved.periodId === p.id
         ) {
-          setDraft(saved);
+          setDraft({
+            ...saved,
+            values: initialValues(p.kind, saved.optional, saved.values),
+          });
           if (saved.version !== (a.report?.version || 0)) setConflict(true);
         }
         setReady(true);
@@ -343,7 +351,20 @@ function Entry({
     draft.optional,
   );
   const change = (patch: Partial<Draft>) => {
-    setDraft((d) => ({ ...d, ...patch, pending: undefined }));
+    setDraft((d) => ({
+      ...d,
+      ...patch,
+      ...(patch.optional
+        ? {
+            values: initialValues(
+              p.kind,
+              patch.optional,
+              patch.values || d.values,
+            ),
+          }
+        : {}),
+      pending: undefined,
+    }));
     setReceipt(null);
   };
   async function importDraft(file?: File) {
@@ -358,7 +379,12 @@ function Entry({
       )
         throw new Error("File không thuộc đơn vị, kỳ hoặc phiên bản biểu này.");
       const parsed = draftImportSchema.parse(value);
-      change({ ...parsed, unitId: a.unitId, pending: undefined });
+      change({
+        ...parsed,
+        values: initialValues(p.kind, parsed.optional, parsed.values),
+        unitId: a.unitId,
+        pending: undefined,
+      });
       notify("Đã khôi phục bản nháp. Hãy rà soát trước khi gửi.");
     } catch (e) {
       notify((e as Error).message);
@@ -431,7 +457,7 @@ function Entry({
         const next = {
           ...initial(),
           ...{
-            values: server.values,
+            values: initialValues(p.kind, server.optional, server.values),
             optional: server.optional,
             notes: server.notes,
             reporterName: server.reporterName,
@@ -707,7 +733,7 @@ function Entry({
                     min="0"
                     max="100000000"
                     step="1"
-                    placeholder="—"
+                    placeholder="0"
                     value={draft.values[f.key] ?? ""}
                     onChange={(e) =>
                       change({
@@ -720,6 +746,11 @@ function Entry({
                         },
                       })
                     }
+                    onFocus={(e) => e.currentTarget.select()}
+                    onBlur={() => {
+                      if (draft.values[f.key] == null)
+                        change({ values: { ...draft.values, [f.key]: 0 } });
+                    }}
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
                         e.preventDefault();
@@ -735,7 +766,7 @@ function Entry({
                 </div>
               ))}
             <div className="field-footer">
-              <span>Ô trống là chưa nhập. Nhập 0 nếu không phát sinh.</span>
+              <span>Các ô mặc định là 0. Chọn ô và nhập số để thay thế.</span>
               <div className="actions">
                 <button
                   className="button secondary small"

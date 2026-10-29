@@ -107,3 +107,12 @@ Kết quả và giới hạn kiểm tra bản đầu được ghi trong `docs/KI
 Prisma Free cần xác nhận quyền lợi backup trong console. Trước vận hành chính thức, thiết lập sao lưu database ra nơi riêng, kiểm tra khôi phục và theo dõi quota operations/dung lượng. File Excel tổng hợp không thay thế bản backup. Không có job backup cloud nào được kích hoạt sẵn.
 
 Xuất Word/PDF theo bố cục hành chính, tự gợi ý số liệu giữa các kỳ, gửi nhắc qua email/SMS/Zalo, khôi phục phiên bản cũ và trình chỉnh sửa danh mục biểu là các hạng mục tiếp theo. Bản hiện tại đã có xuất Excel và lịch sử đọc lại từng lần gửi. Chưa có việc gửi tin tự động ra ngoài.
+
+## Dashboard và lịch báo cáo tự động
+
+- Menu **Số liệu tổng hợp** hiển thị toàn bộ chỉ tiêu của kỳ được chọn, lọc từng đơn vị, tìm chỉ tiêu và xuất Excel theo cùng bộ lọc. Mặc định chỉ cộng bản đã nộp đủ; có thể bật gồm bản gửi tạm. Ô chưa nhập được phân biệt với số 0, kèm số nguồn còn thiếu. Tổng loại các đơn vị con đã được đơn vị cấp trên báo cáo gộp.
+- **Kỳ báo cáo → Lịch báo cáo tự động** cho phép chỉnh từng loại Tuần/Tháng/Quý/6 tháng/Năm. Chuẩn bị trước 12 tháng, gia hạn danh sách mỗi ngày bằng maintenance cron. Việc mở/khóa kiểm tra trực tiếp theo timestamp trên máy chủ, không phụ thuộc thời điểm cron.
+- Mặc định: báo cáo tuần mở thứ Hai cho tuần trước; các loại còn lại mở ngày đầu kỳ tiếp theo cho kỳ trước. Mở 08:00, hạn 16:00, khóa 17:00 giờ Việt Nam. Có thể chỉnh ngày mở, giờ và số ngày đến hạn/khóa. Ngày 29–31 tự lùi về cuối tháng ngắn.
+- Chỉnh mặc định cập nhật các kỳ tự động chưa mở; chọn thêm áp dụng cho kỳ đang mở nếu cần. Kỳ tạo thủ công, kỳ đã khóa và kỳ đã chỉnh thời gian riêng được giữ nguyên. Nếu giờ mở mới vượt hạn riêng của một đơn vị, kỳ đó được giữ nguyên và có thông báo. Tắt tự tạo không hủy những kỳ đã có.
+- Các đơn vị đang hoạt động được giao các kỳ tự động; đơn vị nhập mới cũng được giao các kỳ còn chưa đến hạn. Lịch bắt đầu áp dụng từ khi kích hoạt, không tạo nghĩa vụ quá hạn hồi tố.
+- Ô nhập số mới mặc định 0, chọn sẵn khi chạm để thay nhanh; giữ số đã nhập và nháp offline. Dữ liệu cũ chưa gửi không bị đánh dấu đã nộp chỉ vì giao diện có giá trị mặc định.

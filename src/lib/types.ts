@@ -24,6 +24,8 @@ export interface Period {
   dueAt: string;
   closesAt: string;
   formVersion: number;
+  autoKey?: string | null;
+  scheduleOverride?: boolean;
   _count?: { assignments: number };
 }
 export interface Report {

@@ -16,7 +16,8 @@
     "db:seed": "tsx scripts/seed.ts",
     "db:local": "tsx scripts/local-db.ts",
     "test:integration": "tsx scripts/integration.ts",
-    "test:load": "tsx scripts/load.ts"
+    "test:load": "tsx scripts/load.ts",
+    "db:schedules": "tsx scripts/sync-schedules.ts"
   },
   "dependencies": {
     "@prisma/adapter-pg": "7.10.1",

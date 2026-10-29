@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
 import { endpoint } from "@/lib/http";
+import { periodPriority } from "@/lib/schedule-calendar";
 export const dynamic = "force-dynamic";
 export const GET = endpoint(async (req) => {
   const user = await requireUser(false, true);
@@ -14,12 +15,14 @@ export const GET = endpoint(async (req) => {
   };
   if (user.mustChangePassword) return NextResponse.json({ me });
   if (user.role === "ADMIN") {
-    const periods = await db().period.findMany({
-      orderBy: { startAt: "desc" },
-      take: 100,
-      omit: { formSnapshot: true },
-      include: { _count: { select: { assignments: true } } },
-    });
+    const periods = periodPriority(
+      await db().period.findMany({
+        orderBy: { startAt: "desc" },
+        take: 250,
+        omit: { formSnapshot: true },
+        include: { _count: { select: { assignments: true } } },
+      }),
+    );
     const selectedId =
       new URL(req.url).searchParams.get("periodId") || periods[0]?.id;
     const [units, assignments] = await Promise.all([
@@ -71,9 +74,17 @@ export const GET = endpoint(async (req) => {
   }
   const [assignments, contacts] = await Promise.all([
     db().assignment.findMany({
-      where: { unitId: user.unitId! },
+      where: {
+        unitId: user.unitId!,
+        OR: [
+          {
+            period: { opensAt: { lte: new Date(Date.now() + 45 * 86400000) } },
+          },
+          { report: { isNot: null } },
+        ],
+      },
       orderBy: { period: { startAt: "desc" } },
-      take: 40,
+      take: 150,
       include: { period: true, report: true },
     }),
     db().contact.findMany({
@@ -82,5 +93,12 @@ export const GET = endpoint(async (req) => {
       take: 30,
     }),
   ]);
-  return NextResponse.json({ me, assignments, contacts });
+  const ordered = periodPriority(
+    assignments.map((a) => ({
+      ...a,
+      opensAt: a.period.opensAt,
+      closesAt: a.closesAt || a.period.closesAt,
+    })),
+  );
+  return NextResponse.json({ me, assignments: ordered, contacts });
 });

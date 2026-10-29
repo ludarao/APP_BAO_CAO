@@ -41,6 +41,7 @@ export const POST = endpoint(async (req) => {
     async (tx) => {
       // Serialize rare admin imports to validate the complete parent graph and batch identity.
       await tx.$executeRaw`SELECT pg_advisory_xact_lock(701028)`;
+      await tx.$executeRaw`SELECT pg_advisory_xact_lock(701029)`;
       const previous = await tx.audit.findFirst({
         where: { action: "IMPORT_UNITS", target: input.batchId },
       });
@@ -75,6 +76,7 @@ export const POST = endpoint(async (req) => {
       let created = 0;
       let updated = 0;
       const createdCodes: string[] = [];
+      const createdIds: string[] = [];
       for (const row of input.rows) {
         const account = credentials.find((c) => c?.code === row.code);
         const old = await tx.unit.findUnique({ where: { code: row.code } });
@@ -95,7 +97,7 @@ export const POST = endpoint(async (req) => {
               409,
               "Danh sách đơn vị vừa thay đổi. Hãy xem trước lại.",
             );
-          await tx.unit.create({
+          const added = await tx.unit.create({
             data: {
               code: row.code,
               name: row.name,
@@ -111,8 +113,23 @@ export const POST = endpoint(async (req) => {
             },
           });
           created++;
+          createdIds.push(added.id);
           createdCodes.push(row.code);
         }
+      }
+      if (createdIds.length) {
+        const periods = await tx.period.findMany({
+          where: { autoKey: { not: null }, dueAt: { gte: new Date() } },
+          select: { id: true },
+        });
+        const assignments = periods.flatMap((period) =>
+          createdIds.map((unitId) => ({ periodId: period.id, unitId })),
+        );
+        for (let i = 0; i < assignments.length; i += 5000)
+          await tx.assignment.createMany({
+            data: assignments.slice(i, i + 5000),
+            skipDuplicates: true,
+          });
       }
       await tx.audit.create({
         data: {

@@ -16,6 +16,7 @@ export const POST = endpoint(async (req) => {
     })
     .parse(await body(req));
   await db().$transaction(async (tx) => {
+    await tx.$executeRaw`SELECT pg_advisory_xact_lock(701029)`;
     await tx.$queryRaw`SELECT "id" FROM "Period" WHERE "id" = ${input.periodId} FOR UPDATE`;
     const period = await tx.period.findUnique({
       where: { id: input.periodId },
@@ -54,7 +55,7 @@ export const POST = endpoint(async (req) => {
       };
       await tx.period.update({
         where: { id: period.id },
-        data: { opensAt, dueAt, closesAt },
+        data: { opensAt, dueAt, closesAt, scheduleOverride: true },
       });
     }
     await tx.audit.create({
