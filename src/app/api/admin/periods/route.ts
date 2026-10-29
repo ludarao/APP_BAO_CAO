@@ -15,6 +15,7 @@ export const POST = endpoint(async (req) => {
     throw new ApiError(400, "Có đơn vị không tồn tại hoặc đã bị khóa.");
   const { unitIds: _, ...rest } = input;
   const period = await db().$transaction(async (tx) => {
+    await tx.$executeRaw`SELECT pg_advisory_xact_lock_shared(701030)`;
     const created = await tx.period.create({
       data: {
         ...rest,

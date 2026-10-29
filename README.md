@@ -116,3 +116,14 @@ Xuất Word/PDF theo bố cục hành chính, tự gợi ý số liệu giữa c
 - Chỉnh mặc định cập nhật các kỳ tự động chưa mở; chọn thêm áp dụng cho kỳ đang mở nếu cần. Kỳ tạo thủ công, kỳ đã khóa và kỳ đã chỉnh thời gian riêng được giữ nguyên. Nếu giờ mở mới vượt hạn riêng của một đơn vị, kỳ đó được giữ nguyên và có thông báo. Tắt tự tạo không hủy những kỳ đã có.
 - Các đơn vị đang hoạt động được giao các kỳ tự động; đơn vị nhập mới cũng được giao các kỳ còn chưa đến hạn. Lịch bắt đầu áp dụng từ khi kích hoạt, không tạo nghĩa vụ quá hạn hồi tố.
 - Ô nhập số mới mặc định 0, chọn sẵn khi chạm để thay nhanh; giữ số đã nhập và nháp offline. Dữ liệu cũ chưa gửi không bị đánh dấu đã nộp chỉ vì giao diện có giá trị mặc định.
+
+## Reset dữ liệu dành cho admin
+
+Vào **Cài đặt tài khoản → Cài đặt quản trị → Reset dữ liệu**:
+
+- **Xóa dữ liệu báo cáo**: xóa số liệu, nhận xét, thông tin người nhập đã lưu và lịch sử gửi ở tất cả kỳ; giữ đơn vị, tài khoản, kỳ và thời hạn riêng.
+- **Xóa toàn bộ dữ liệu**: xóa thêm đơn vị, tài khoản đơn vị, phân công, kỳ và nhật ký cũ. Giữ mọi tài khoản admin, nhật ký reset và lịch mặc định; cron sẽ tạo lại các kỳ tự động từ thời điểm reset.
+
+Hộp xác nhận hiển thị số bản ghi, yêu cầu đúng cụm xác nhận và mật khẩu admin hiện tại. Có kiểm tra quyền, nguồn request, giới hạn thử mật khẩu và lưu nhật ký reset. Các phiên đơn vị bị thu hồi; yêu cầu gửi đang chờ không thể tạo lại báo cáo sau reset. Request reset có mã riêng, thử lại cùng mã không xóa dữ liệu mới. Nháp offline trên máy khác không thể xóa từ xa, người nhập cần bỏ nháp cũ khi nhập lại. Dữ liệu đã xóa không có nút hoàn tác; xuất Excel trước nếu cần.
+
+Sau `npm run build`, chạy `npm run test:reset` để kiểm tra xóa trên database tạm riêng ở PostgreSQL localhost (cần quyền tạo database; cổng 3101 phải trống). Script tự migrate, khởi động bản build, kiểm tra rồi dọn database tạm; không chạy trên cloud hoặc database đang sử dụng.

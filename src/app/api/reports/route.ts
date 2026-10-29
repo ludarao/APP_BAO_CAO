@@ -1,6 +1,7 @@
+import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { hash, requireUser, rateLimit } from "@/lib/auth";
+import { COOKIE, hash, requireUser, rateLimit } from "@/lib/auth";
 import { body, endpoint, ApiError } from "@/lib/http";
 import {
   reportSchema,
@@ -16,8 +17,20 @@ export const POST = endpoint(async (req) => {
   const input = reportSchema.parse(await body(req));
   await rateLimit(`submit:${user.id}`, 30, 60);
   const payloadHash = hash(JSON.stringify(input));
+  const tokenHash = hash((await cookies()).get(COOKIE)?.value || "");
   const receipt = await db().$transaction(
     async (tx) => {
+      await tx.$executeRaw`SELECT pg_advisory_xact_lock_shared(701030)`;
+      const session = await tx.session.findUnique({ where: { tokenHash } });
+      if (
+        !session ||
+        session.userId !== user.id ||
+        session.expiresAt < new Date()
+      )
+        throw new ApiError(
+          401,
+          "Phiên đã bị thu hồi. Hãy đăng nhập lại trước khi gửi.",
+        );
       const periodRows = await tx.$queryRaw<
         { id: string }[]
       >`SELECT "id" FROM "Period" WHERE "id" = ${input.periodId} FOR SHARE`;

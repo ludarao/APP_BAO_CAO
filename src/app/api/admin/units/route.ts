@@ -163,6 +163,7 @@ export const PATCH = endpoint(async (req) => {
     .object({ unitId: z.string(), active: z.boolean() })
     .parse(await body(req));
   await db().$transaction(async (tx) => {
+    await tx.$executeRaw`SELECT pg_advisory_xact_lock_shared(701030)`;
     await tx.unit.update({
       where: { id: input.unitId },
       data: { active: input.active },

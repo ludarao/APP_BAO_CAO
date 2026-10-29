@@ -24,6 +24,7 @@ import type { Bootstrap } from "@/lib/types";
 import Admin from "./admin";
 import Reporter from "./reporter";
 import Analytics from "./analytics";
+import ResetData from "./reset-data";
 
 declare global {
   interface Window {
@@ -286,10 +287,11 @@ export default function Portal() {
               <div className="page-heading">
                 <div>
                   <div className="eyebrow">TÀI KHOẢN</div>
-                  <h1>Thiết lập bảo mật</h1>
+                  <h1>{admin ? "Cài đặt quản trị" : "Thiết lập bảo mật"}</h1>
                   <p>{data.me.unit?.name || "Tài khoản quản trị hệ thống"}</p>
                 </div>
               </div>
+              {admin && <ResetData notify={notify} done={() => refresh()} />}
               <PasswordForm
                 onDone={() =>
                   notify("Đã đổi mật khẩu và thu hồi các phiên cũ.")

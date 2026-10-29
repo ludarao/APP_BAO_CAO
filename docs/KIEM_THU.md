@@ -40,3 +40,9 @@ Trước đó, dev server có một số kết nối TCP bị từ chối/ngắt
 - 27 unit tests: lịch theo giờ Việt Nam, chuyển năm/năm nhuận, hạn qua ngày, chống tạo hồi tố; tổng hợp theo cây đơn vị, thiếu số liệu so với số 0, trường tháng tùy chọn, mặc định số 0 giữ dữ liệu cũ.
 - 52 integration assertions trên PostgreSQL local và HTTP API: phân quyền analytics/schedules, số tổng không cộng trùng cấp con, lọc một đơn vị và Excel tương ứng, xác thực thời gian, tạo lịch không trùng, giữ kỳ đã chỉnh riêng, hai lần sync đồng thời tự bổ sung assignment duy nhất.
 - Kiểm tra giao diện ở viewport 390×844: độ phóng đại sau reload = 1, nội dung không tràn ngang, input/select 16px; chưa kiểm tra trên iPhone thật.
+
+## Reset dữ liệu dành cho admin
+
+Bổ sung 27 kiểm tra HTTP/database trên database PostgreSQL tạm riêng, chạy bản production local: từ chối anonymous/đơn vị/sai Origin/sai mật khẩu/sai cụm xác nhận; đối chiếu số lượng; xóa đầy đủ report/revision/contact; giữ cấu trúc và hạn riêng khi chỉ xóa báo cáo; thu hồi phiên đơn vị; giữ mọi admin và lịch mặc định khi xóa toàn bộ; giữ nhật ký reset; lặp request không xóa báo cáo mới. Kiểm tra đồng thời cho yêu cầu gửi đã xác thực trước reset đang đợi khóa: sau reset bị từ chối 401, dữ liệu không tái xuất hiện. Kiểm tra cron có thể tạo lại kỳ sau khi xóa toàn bộ.
+
+27 unit tests và 52 integration assertions cũ vẫn qua. Giao diện local xác nhận hai nút dành cho admin và hộp xác nhận bị khóa khi chưa nhập cụm từ/mật khẩu. Không thực hiện reset dữ liệu production trong kiểm thử.

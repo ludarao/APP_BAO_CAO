@@ -2688,3 +2688,49 @@ a.button {
     padding-right: max(16px, env(safe-area-inset-right));
   }
 }
+
+.reset-settings {
+  padding: 24px;
+  margin-bottom: 24px;
+  border-color: #e6bbb7;
+}
+.reset-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+.reset-options article {
+  min-width: 0;
+}
+.reset-options h3 {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+.reset-options p,
+.reset-settings form > p {
+  font-size: 13px;
+  line-height: 1.8;
+  margin-bottom: 18px;
+}
+.reset-settings form > label {
+  margin-top: 16px;
+}
+.button.danger {
+  background: #a82c25;
+  border-color: #a82c25;
+  color: white;
+}
+.button.danger:hover {
+  background: #8c221d;
+}
+.reset-counts {
+  margin-top: 18px;
+}
+@media (max-width: 760px) {
+  .reset-options {
+    grid-template-columns: 1fr;
+  }
+  .reset-settings {
+    padding: 18px;
+  }
+}
